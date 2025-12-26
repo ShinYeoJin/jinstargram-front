@@ -57,7 +57,8 @@ export function useSignupForm() {
           
           // uploadImageFile이 undefined를 반환하면 업로드 실패
           if (profileImageUrl === undefined) {
-            // uploadError가 이미 설정되어 있을 것임
+            // uploadError 상태를 직접 확인 (비동기 업데이트를 위해 약간의 지연)
+            await new Promise(resolve => setTimeout(resolve, 100));
             const errorMsg = imageUpload.uploadError || '이미지 업로드에 실패했습니다.';
             setGeneralError(errorMsg);
             return;

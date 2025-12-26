@@ -61,7 +61,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
     // 401 에러이고 아직 재시도하지 않은 경우
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    // 회원가입/로그인 엔드포인트는 토큰 갱신을 시도하지 않음
+    const isAuthEndpoint = originalRequest?.url?.includes('/auth/signup') || 
+                           originalRequest?.url?.includes('/auth/login');
+    
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중이면 대기열에 추가
         return new Promise((resolve, reject) => {
@@ -99,9 +103,12 @@ apiClient.interceptors.response.use(
         processQueue(refreshError, null);
         isRefreshing = false;
         
-        // 쿠키는 백엔드에서 제거되므로 프론트엔드에서는 리다이렉트만
-        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-          window.location.href = '/login';
+        // 회원가입/로그인 페이지에서는 리다이렉트하지 않음 (에러를 폼에서 처리)
+        if (typeof window !== 'undefined') {
+          const currentPath = window.location.pathname;
+          if (currentPath !== '/login' && currentPath !== '/signup') {
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(refreshError);
       }
