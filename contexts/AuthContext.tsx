@@ -30,6 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 인증 상태 확인 함수
   const checkAuth = useCallback(async () => {
+    // 현재 로그인 상태가 true인 경우, checkAuth 실패해도 상태를 false로 변경하지 않음
+    // (로그인 직후 쿠키 설정 지연으로 인한 일시적 실패 방지)
+    const currentIsLoggedIn = isLoggedIn
+    
     try {
       const profileData = await getProfile(true) // silent 모드로 호출 (401 에러 조용히 처리)
       // API 성공 = 인증 성공
@@ -40,15 +44,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('isLoggedIn', 'true')
       }
     } catch (error: any) {
-      // API 실패 = 인증 실패 (401 에러)
-      setIsLoggedIn(false)
-      setProfile(null)
-      // 로그아웃 시 플래그 제거
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('isLoggedIn')
+      // API 실패 처리
+      // 단, 현재 로그인 상태가 true인 경우에는 false로 변경하지 않음
+      // (로그인 직후 쿠키 설정 지연으로 인한 일시적 실패 방지)
+      if (currentIsLoggedIn !== true) {
+        // 로그인 상태가 아닌 경우에만 false로 변경
+        setIsLoggedIn(false)
+        setProfile(null)
+        // 로그아웃 시 플래그 제거
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isLoggedIn')
+        }
+      }
+      // 로그인 상태가 true인 경우에는 상태를 유지하고 프로필만 null로 설정
+      // (나중에 재시도로 프로필 데이터 로드)
+      if (currentIsLoggedIn === true) {
+        setProfile(null) // 프로필만 null로 설정, isLoggedIn은 유지
       }
     }
-  }, [])
+  }, [isLoggedIn])
 
   // 로그인 성공 시 즉시 상태 업데이트 (API 호출 전)
   const setLoggedIn = useCallback((value: boolean) => {
