@@ -38,26 +38,8 @@ export default function Navbar() {
 
     // 인증 상태 변경 감지를 위한 이벤트 리스너
     const handleAuthChange = () => {
-      // 이벤트 발생 시 즉시 확인하고, 여러 번 확인 (쿠키 설정 대기)
+      // 이벤트 발생 시 즉시 확인
       checkAuth()
-      setTimeout(() => {
-        checkAuth()
-      }, 100)
-      setTimeout(() => {
-        checkAuth()
-      }, 300)
-      setTimeout(() => {
-        checkAuth()
-      }, 600)
-      setTimeout(() => {
-        checkAuth()
-      }, 1000)
-      setTimeout(() => {
-        checkAuth()
-      }, 2000)
-      setTimeout(() => {
-        checkAuth()
-      }, 3000)
     }
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)
@@ -66,7 +48,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('auth-change', handleAuthChange)
     }
-  }, [pathname]) // pathname이 변경될 때마다 확인
+  }, [pathname]) // pathname이 변경될 때마다 확인 (페이지 이동 시 자동으로 상태 확인)
 
   const handleLogout = async () => {
     try {
