@@ -36,12 +36,14 @@ export function useAuth(): UseAuthReturn {
           // 약간의 지연 후 다시 발생 (쿠키 설정 대기)
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'));
-          }, 300);
+          }, 500);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
+          }, 1000);
         }
 
-        // 프로필 페이지로 즉시 리다이렉트 (성공 메시지 표시를 위한 파라미터 포함)
-        router.push('/profile?login=success');
-        router.refresh();
+        // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해
+        // 여기서는 리다이렉트하지 않고, 성공 모달에서 처리하도록 함
       } catch (err: unknown) {
         // err가 이미 ErrorResponse인지 확인
         if (err && typeof err === 'object' && 'message' in err) {
