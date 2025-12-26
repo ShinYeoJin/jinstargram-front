@@ -45,6 +45,9 @@ export function useAuth(): UseAuthReturn {
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'));
           }, 500);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
+          }, 1000);
         }
 
         // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해
