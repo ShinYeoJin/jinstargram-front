@@ -16,7 +16,7 @@ export interface UseAuthReturn {
 }
 
 export function useAuth(): UseAuthReturn {
-  const { checkAuth } = useAuthContext(); // AuthContext에서 checkAuth 가져오기
+  const { checkAuth, setLoggedIn } = useAuthContext(); // AuthContext에서 checkAuth와 setLoggedIn 가져오기
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,13 +28,16 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: LoginResponse = await login(credentials);
 
+        // 로그인 성공 시 즉시 상태 업데이트 (API 호출 전)
+        // 이렇게 하면 Navbar가 즉시 리렌더링됨
+        setLoggedIn(true)
+
         // localStorage에 로그인 플래그 저장
         if (typeof window !== 'undefined') {
           localStorage.setItem('isLoggedIn', 'true')
         }
 
-        // AuthContext의 checkAuth를 호출하여 Navbar 상태 즉시 업데이트
-        // 쿠키 설정 대기를 위해 약간의 지연 후 호출
+        // 프로필 데이터는 나중에 로드 (쿠키 설정 대기)
         setTimeout(() => {
           checkAuth()
         }, 100)

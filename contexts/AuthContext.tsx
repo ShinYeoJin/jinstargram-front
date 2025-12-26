@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoggedIn: boolean | null // null: unknown, true: authenticated, false: unauthenticated
   profile: ProfileResponse | null
   checkAuth: () => Promise<void>
+  setLoggedIn: (value: boolean) => void // 로그인 성공 시 즉시 상태 업데이트
   handleLogout: () => Promise<void>
 }
 
@@ -36,6 +37,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // 로그아웃 시 플래그 제거
       if (typeof window !== 'undefined') {
         localStorage.removeItem('isLoggedIn')
+      }
+    }
+  }, [])
+
+  // 로그인 성공 시 즉시 상태 업데이트 (API 호출 전)
+  const setLoggedIn = useCallback((value: boolean) => {
+    setIsLoggedIn(value)
+    if (!value) {
+      setProfile(null)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('isLoggedIn')
+      }
+    } else {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isLoggedIn', 'true')
       }
     }
   }, [])
@@ -77,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [checkAuth])
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, profile, checkAuth, handleLogout }}>
+    <AuthContext.Provider value={{ isLoggedIn, profile, checkAuth, setLoggedIn, handleLogout }}>
       {children}
     </AuthContext.Provider>
   )
