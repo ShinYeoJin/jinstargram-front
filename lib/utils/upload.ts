@@ -47,6 +47,14 @@ export const uploadImage = async (
   folder: string = 'profiles',
   fileName?: string
 ): Promise<string> => {
+  // Supabase 환경 변수 확인
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('이미지 업로드 기능이 설정되지 않았습니다. Supabase 설정을 확인해주세요.')
+  }
+
   try {
     // 파일명 생성 (없으면 타임스탬프 기반)
     const fileExt = file.name.split('.').pop()

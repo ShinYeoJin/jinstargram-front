@@ -47,12 +47,30 @@ export function useSignupForm() {
     },
     validate,
     onSubmit: async (values) => {
-      // 프로필 이미지 업로드
-      const profileImageUrl = await imageUpload.uploadImageFile(values.username);
-      if (imageUpload.uploadError) {
-        setGeneralError(imageUpload.uploadError);
-        return;
+      setGeneralError(''); // 에러 초기화
+      
+      // 프로필 이미지 업로드 (이미지가 선택된 경우에만)
+      let profileImageUrl: string | undefined = undefined;
+      if (imageUpload.imageFile) {
+        try {
+          profileImageUrl = await imageUpload.uploadImageFile(values.username);
+          
+          // uploadImageFile이 undefined를 반환하면 업로드 실패
+          if (profileImageUrl === undefined) {
+            // uploadError가 이미 설정되어 있을 것임
+            const errorMsg = imageUpload.uploadError || '이미지 업로드에 실패했습니다.';
+            setGeneralError(errorMsg);
+            return;
+          }
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error 
+            ? error.message 
+            : '이미지 업로드에 실패했습니다.';
+          setGeneralError(errorMessage);
+          return;
+        }
       }
+      // 이미지가 선택되지 않은 경우 profileImageUrl은 undefined로 유지 (정상)
 
       // 회원가입 API 호출
       try {
@@ -60,7 +78,7 @@ export function useSignupForm() {
           id: values.username,
           password: values.password,
           nickname: values.nickname,
-          profileImageUrl,
+          profileImageUrl, // undefined일 수 있음 (이미지 선택 안 한 경우)
         });
 
         setIsSuccessModalOpen(true);

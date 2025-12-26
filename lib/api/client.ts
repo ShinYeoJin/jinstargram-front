@@ -4,6 +4,12 @@ import { API_TIMEOUT } from '@/lib/constants';
 // API 기본 URL 설정
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+// 디버깅: 환경 변수 확인 (개발 환경에서만)
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  console.log('API_BASE_URL:', API_BASE_URL);
+  console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+}
+
 // Axios 인스턴스 생성
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
