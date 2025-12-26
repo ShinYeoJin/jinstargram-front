@@ -18,16 +18,26 @@ export default function AuthGuard({
 
   useEffect(() => {
     const checkAuth = async () => {
+      // localStorage에서 로그인 플래그 확인 (Navbar와 동일한 방식)
+      const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
+      const wasLoggedIn = loginFlag === 'true'
+
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
       try {
-        await getProfile(false) // silent=false: 정상 에러로 처리
+        await getProfile(true) // silent=true: 401 에러 조용히 처리
         setIsAuthenticated(true)
+        // 로그인 성공 시 플래그 저장
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('isLoggedIn', 'true')
+        }
       } catch (error: any) {
-        // 401 에러는 인증 실패이므로 로그인 페이지로 리다이렉트
-        if (error?.response?.status === 401 || error?.statusCode === 401) {
-          router.push(redirectTo)
+        // localStorage 플래그가 있으면 인증 상태 유지 (쿠키 설정 지연 대응)
+        if (wasLoggedIn) {
+          // 플래그가 있으면 인증 상태로 간주 (API 호출 실패해도)
+          setIsAuthenticated(true)
         } else {
-          // 다른 에러도 인증 실패로 간주
+          // 플래그가 없으면 인증 실패로 간주하고 리다이렉트
+          setIsAuthenticated(false)
           router.push(redirectTo)
         }
       }
