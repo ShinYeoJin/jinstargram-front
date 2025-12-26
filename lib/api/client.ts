@@ -62,10 +62,12 @@ apiClient.interceptors.response.use(
     
     // 401 에러이고 아직 재시도하지 않은 경우
     // 회원가입/로그인 엔드포인트는 토큰 갱신을 시도하지 않음
+    // 프로필 요청의 401은 로그인하지 않은 상태이므로 토큰 갱신 시도하지 않음
     const isAuthEndpoint = originalRequest?.url?.includes('/auth/signup') || 
                            originalRequest?.url?.includes('/auth/login');
+    const isProfileRequest = originalRequest?.url?.includes('/auth/profile');
     
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint && !isProfileRequest) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중이면 대기열에 추가
         return new Promise((resolve, reject) => {
@@ -102,6 +104,13 @@ apiClient.interceptors.response.use(
         // 토큰 갱신 실패 시 로그아웃 처리
         processQueue(refreshError, null);
         isRefreshing = false;
+        
+        // 프로필 요청의 401 에러는 조용히 처리 (로그인하지 않은 상태)
+        const isProfileRequest = originalRequest?.url?.includes('/auth/profile');
+        if (isProfileRequest) {
+          // 프로필 요청의 401은 정상적인 상황 (로그인하지 않음)
+          return Promise.reject(refreshError);
+        }
         
         // 회원가입/로그인 페이지에서는 리다이렉트하지 않음 (에러를 폼에서 처리)
         if (typeof window !== 'undefined') {

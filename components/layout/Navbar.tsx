@@ -21,8 +21,15 @@ export default function Navbar() {
         const profileData = await getProfile()
         setProfile(profileData)
         setIsLoggedIn(true)
-      } catch (error) {
-        // 인증 실패 시 로그아웃 상태
+      } catch (error: any) {
+        // 401 에러는 로그인하지 않은 상태이므로 조용히 처리
+        if (error?.statusCode === 401 || error?.response?.status === 401) {
+          setProfile(null)
+          setIsLoggedIn(false)
+          // 401 에러는 정상적인 상황이므로 콘솔에 에러를 출력하지 않음
+          return
+        }
+        // 그 외의 에러만 콘솔에 출력
         console.error('프로필 로드 에러:', error)
         setProfile(null)
         setIsLoggedIn(false)
@@ -38,9 +45,6 @@ export default function Navbar() {
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)
     window.addEventListener('auth-change', handleAuthChange)
-    
-    // pathname 변경 시 확인
-    checkAuth()
 
     return () => {
       window.removeEventListener('auth-change', handleAuthChange)
