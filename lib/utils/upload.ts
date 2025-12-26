@@ -76,13 +76,14 @@ export const uploadImage = async (
       if (process.env.NODE_ENV === 'development') {
         console.error('Supabase Storage 업로드 에러:', {
           message: error.message,
-          statusCode: error.statusCode,
           error: error,
         })
       }
       
-      // 400 에러는 RLS 정책 문제일 가능성이 높음
-      if (error.statusCode === 400 || error.statusCode === 403) {
+      // 에러 메시지에서 상태 코드 확인 (StorageError에는 statusCode가 없을 수 있음)
+      const errorMessage = error.message || ''
+      if (errorMessage.includes('400') || errorMessage.includes('403') || 
+          errorMessage.includes('permission') || errorMessage.includes('forbidden')) {
         throw new Error('이미지 업로드 권한이 없습니다. Supabase Storage의 보안 정책(RLS)을 설정해주세요. Storage > images > Policies에서 Public 정책을 추가해주세요.')
       }
       
