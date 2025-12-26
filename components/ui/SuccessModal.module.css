@@ -1,0 +1,64 @@
+.successModal {
+  text-align: center;
+  padding: 1rem;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  background-color: #FFB84D;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  font-weight: bold;
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #8D6E63;
+  margin-bottom: 0.75rem;
+}
+
+.message {
+  font-size: 0.875rem;
+  color: #BCAAA4;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #FFB84D;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #FFA726;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+

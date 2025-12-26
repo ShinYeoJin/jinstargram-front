@@ -1,0 +1,59 @@
+.container {
+  margin-top: 2rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #8D6E63;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 100%;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #8D6E63;
+  background: #FFF8DC;
+  border: 1px solid #E8D5B7;
+  border-radius: 12px;
+}
+
+.empty p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .empty {
+    padding: 2rem 1rem;
+  }
+}
+

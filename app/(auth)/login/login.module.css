@@ -1,0 +1,184 @@
+.container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background-color: #FFF9E6;
+}
+
+.loginBox {
+  width: 100%;
+  max-width: 450px;
+  background: #FFF8DC;
+  border: 1px solid #E8D5B7;
+  border-radius: 8px;
+  padding: 2.5rem 2.5rem 2rem;
+  box-shadow: 0 4px 12px rgba(255, 184, 77, 0.15);
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #8D6E63;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #5D4037;
+  margin-bottom: 0.25rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #E8D5B7;
+  border-radius: 6px;
+  background-color: #FFFBF0;
+  color: #5D4037;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FFB84D;
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
+}
+
+.input::placeholder {
+  color: #BCAAA4;
+}
+
+.input:disabled {
+  background-color: #FFF8E1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.inputError {
+  border-color: #D84315;
+}
+
+.inputError:focus {
+  border-color: #D84315;
+}
+
+.error {
+  padding: 0.75rem;
+  background-color: #FFE0B2;
+  border: 1px solid #D84315;
+  border-radius: 6px;
+  color: #D84315;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #FFB84D;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #FFA726;
+}
+
+.submitButton:disabled {
+  background-color: #FFE0B2;
+  cursor: not-allowed;
+}
+
+.submitButton.loading {
+  background-color: #FFE0B2;
+  cursor: wait;
+}
+
+.signupLink {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #8D6E63;
+}
+
+.link {
+  color: #FF8F00;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+  color: #FF6F00;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .loginBox {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.5rem;
+  }
+
+  .loginBox {
+    padding: 1.5rem 1rem 1rem;
+    border-radius: 6px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form {
+    gap: 0.75rem;
+  }
+
+  .submitButton {
+    padding: 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .signupLink {
+    font-size: 0.8rem;
+    margin-top: 1.25rem;
+  }
+}
+

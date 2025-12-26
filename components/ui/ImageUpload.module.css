@@ -1,0 +1,120 @@
+.imageUpload {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.imageContainer {
+  width: 100%;
+}
+
+.imagePreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.imagePreview img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+.imageActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.changeButton,
+.removeButton {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.changeButton {
+  background-color: #FFB84D;
+  color: white;
+}
+
+.changeButton:hover:not(:disabled) {
+  background-color: #FFA726;
+}
+
+.removeButton {
+  background-color: #D84315;
+  color: white;
+}
+
+.removeButton:hover:not(:disabled) {
+  background-color: #BF360C;
+}
+
+
+.changeButton:disabled,
+.removeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  border: 2px dashed var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background-color: var(--background-card);
+}
+
+.uploadLabel:hover {
+  border-color: var(--focus-border-color);
+  background-color: var(--background-secondary);
+}
+
+.uploadLabel span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .imagePreview img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .uploadLabel {
+    width: 120px;
+    height: 120px;
+  }
+
+  .changeButton,
+  .removeButton {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+}
+

@@ -1,0 +1,144 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #FFF8DC;
+  border: 1px solid #E8D5B7;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(255, 184, 77, 0.2);
+  transform: translateY(-2px);
+  border-color: #FFB84D;
+}
+
+.avatarContainer {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #E8D5B7;
+}
+
+.avatarPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FFB74D 0%, #FFA726 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border: 1px solid #E8D5B7;
+}
+
+.info {
+  width: 100%;
+  text-align: center;
+  min-width: 0;
+}
+
+.username {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #5D4037;
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.nickname {
+  font-size: 0.75rem;
+  color: #8D6E63;
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bio {
+  font-size: 0.75rem;
+  color: #5D4037;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.followButton {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.followButton.notFollowing {
+  background-color: #FFB84D;
+  color: white;
+}
+
+.followButton.notFollowing:hover {
+  background-color: #FFA726;
+}
+
+.followButton.following {
+  background-color: #FFE0B2;
+  color: #5D4037;
+}
+
+.followButton.following:hover {
+  background-color: #FFCC80;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .card {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .avatar,
+  .avatarPlaceholder {
+    width: 48px;
+    height: 48px;
+  }
+
+  .avatarPlaceholder {
+    font-size: 1.25rem;
+  }
+
+  .username {
+    font-size: 0.8rem;
+  }
+
+  .nickname,
+  .bio {
+    font-size: 0.7rem;
+  }
+
+  .followButton {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+

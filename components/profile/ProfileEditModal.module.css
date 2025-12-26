@@ -1,0 +1,282 @@
+.modalContent {
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #8D6E63;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #5D4037;
+}
+
+.imageSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}
+
+.imagePreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.imagePreview img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #E8D5B7;
+}
+
+.imageActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.uploadLabel {
+  display: inline-block;
+  padding: 2rem;
+  background-color: #FFF8DC;
+  border: 2px dashed #E8D5B7;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.uploadLabel:hover {
+  background-color: #FFE0B2;
+  border-color: #FFB84D;
+}
+
+.uploadLabel span {
+  color: #8D6E63;
+  font-weight: 500;
+}
+
+.fileInput {
+  display: none;
+}
+
+.changeButton {
+  padding: 0.5rem 1rem;
+  background-color: #FFB84D;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.changeButton:hover {
+  background-color: #FFA726;
+}
+
+.changeButton:disabled {
+  background-color: #FFE0B2;
+  cursor: not-allowed;
+}
+
+.removeButton {
+  padding: 0.5rem 1rem;
+  background-color: #D84315;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+  background-color: #BF360C;
+}
+
+.removeButton:disabled {
+  background-color: #FFAB91;
+  cursor: not-allowed;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #E8D5B7;
+  border-radius: 6px;
+  background-color: #FFFBF0;
+  color: #5D4037;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #FFB84D;
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
+}
+
+.input:disabled {
+  background-color: #FFF8E1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #E8D5B7;
+  border-radius: 6px;
+  background-color: #FFFBF0;
+  color: #5D4037;
+  transition: border-color 0.2s;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #FFB84D;
+  box-shadow: 0 0 0 3px rgba(255, 184, 77, 0.1);
+}
+
+.textarea:disabled {
+  background-color: #FFF8E1;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.charCount {
+  font-size: 0.75rem;
+  color: #8D6E63;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.error {
+  padding: 0.75rem;
+  background-color: #FFE0B2;
+  border: 1px solid #D84315;
+  border-radius: 6px;
+  color: #D84315;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #FFE0B2;
+  color: #5D4037;
+  border: 1px solid #E8D5B7;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover:not(:disabled) {
+  background-color: #FFCC80;
+}
+
+.cancelButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #FFB84D;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover:not(:disabled) {
+  background-color: #FFA726;
+}
+
+.saveButton:disabled {
+  background-color: #FFE0B2;
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form {
+    gap: 1.25rem;
+  }
+
+  .imagePreview img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .uploadLabel {
+    padding: 1.5rem;
+    min-width: 150px;
+  }
+
+  .input {
+    padding: 0.65rem;
+    font-size: 0.85rem;
+  }
+
+  .buttons {
+    gap: 0.5rem;
+  }
+
+  .cancelButton,
+  .saveButton {
+    padding: 0.65rem;
+    font-size: 0.85rem;
+  }
+}
+
