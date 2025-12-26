@@ -18,10 +18,7 @@ export default function Navbar() {
     const checkAuth = async () => {
       // localStorage에서 로그인 플래그 확인 (즉시 업데이트를 위해)
       const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
-      if (loginFlag === 'true') {
-        // 플래그가 있으면 즉시 로그인 상태로 설정하고 프로필 가져오기
-        setIsLoggedIn(true)
-      }
+      const wasLoggedIn = loginFlag === 'true'
 
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
       try {
@@ -33,13 +30,19 @@ export default function Navbar() {
           localStorage.setItem('isLoggedIn', 'true')
         }
       } catch (error: any) {
-        // 모든 에러를 조용히 처리 (401은 로그인하지 않은 상태, 정상)
-        // 네트워크 에러나 기타 에러도 조용히 처리
-        setProfile(null)
-        setIsLoggedIn(false)
-        // 로그아웃 시 플래그 제거
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('isLoggedIn')
+        // localStorage 플래그가 있으면 로그인 상태 유지 (쿠키 설정 지연 대응)
+        if (wasLoggedIn) {
+          // 플래그가 있으면 로그인 상태 유지 (API 호출 실패해도)
+          setIsLoggedIn(true)
+          // 프로필은 나중에 다시 시도할 수 있도록 null 유지
+        } else {
+          // 플래그가 없으면 로그아웃 상태
+          setProfile(null)
+          setIsLoggedIn(false)
+          // 로그아웃 시 플래그 제거
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('isLoggedIn')
+          }
         }
         // 조용한 에러가 아닌 경우에만 콘솔에 출력 (실제 에러만)
         if (!error?.isSilent && error?.statusCode !== 401 && error?.response?.status !== 401) {
