@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Modal from '@/components/ui/Modal'
 import ImageUpload from '@/components/ui/ImageUpload'
 import { uploadImage } from '@/lib/utils/upload'
-import { getToken } from '@/lib/utils/token'
 import styles from './ProfileEditModal.module.css'
 
 interface ProfileEditModalProps {
