@@ -25,7 +25,13 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // 쿠키는 withCredentials: true로 자동 전송됨
-    // 필요시 추가 헤더 설정 가능
+    // 디버깅: 쿠키 전송 확인 (개발 환경에서만)
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+        withCredentials: config.withCredentials,
+        baseURL: config.baseURL,
+      });
+    }
     return config;
   },
   (error) => {
@@ -55,6 +61,13 @@ const processQueue = (error: any, token: string | null = null) => {
 // 응답 인터셉터: 에러 처리 및 토큰 자동 갱신
 apiClient.interceptors.response.use(
   (response) => {
+    // 디버깅: 성공 응답 확인 (개발 환경에서만)
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log(`[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`, {
+        status: response.status,
+        statusText: response.statusText,
+      });
+    }
     return response;
   },
   async (error: AxiosError) => {
@@ -69,9 +82,12 @@ apiClient.interceptors.response.use(
     
     // 프로필 요청의 401 에러는 조용히 처리 (로그인하지 않은 상태)
     if (isProfileRequest && error.response?.status === 401) {
-      // 조용한 에러 플래그 추가
-      const silentError: any = error;
+      // 조용한 에러 플래그 추가 및 스택 제거
+      const silentError: any = new Error('Unauthorized');
+      silentError.statusCode = 401;
+      silentError.response = error.response;
       silentError.isSilent = true;
+      silentError.stack = undefined; // 스택 제거하여 콘솔에 표시되지 않도록
       return Promise.reject(silentError);
     }
     

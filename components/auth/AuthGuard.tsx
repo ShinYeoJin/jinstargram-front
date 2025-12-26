@@ -20,11 +20,16 @@ export default function AuthGuard({
     const checkAuth = async () => {
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
       try {
-        await getProfile()
+        await getProfile(false) // silent=false: 정상 에러로 처리
         setIsAuthenticated(true)
-      } catch (error) {
-        // 인증 실패 시 로그인 페이지로 리다이렉트
-        router.push(redirectTo)
+      } catch (error: any) {
+        // 401 에러는 인증 실패이므로 로그인 페이지로 리다이렉트
+        if (error?.response?.status === 401 || error?.statusCode === 401) {
+          router.push(redirectTo)
+        } else {
+          // 다른 에러도 인증 실패로 간주
+          router.push(redirectTo)
+        }
       }
     }
 

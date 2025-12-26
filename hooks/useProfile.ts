@@ -52,11 +52,25 @@ export function useProfile(
     const fetchProfile = async () => {
       try {
         setIsLoading(true);
-        const data = await getProfile();
+        setError(null); // 에러 초기화
+        const data = await getProfile(false); // silent=false: 정상 에러로 처리
         setProfile(data);
       } catch (err: unknown) {
         console.error('프로필 조회 에러:', err);
-        const errorMessage = err instanceof Error ? err.message : '프로필을 불러오는데 실패했습니다.';
+        const errorResponse = err as any;
+        let errorMessage = '프로필을 불러오는데 실패했습니다.';
+        
+        // 에러 메시지 추출
+        if (errorResponse?.message) {
+          errorMessage = errorResponse.message;
+        } else if (errorResponse?.response?.data?.message) {
+          errorMessage = Array.isArray(errorResponse.response.data.message)
+            ? errorResponse.response.data.message.join(', ')
+            : errorResponse.response.data.message;
+        } else if (err instanceof Error) {
+          errorMessage = err.message;
+        }
+        
         setError(errorMessage);
       } finally {
         setIsLoading(false);

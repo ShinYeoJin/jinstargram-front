@@ -24,11 +24,16 @@ export default function SuccessModal({
   const router = useRouter()
 
   const handleButtonClick = () => {
-    if (redirectPath) {
-      router.push(redirectPath)
-    }
     if (onClose) {
       onClose()
+    }
+    // 리다이렉트는 모달이 닫힌 후에 실행
+    if (redirectPath) {
+      // 약간의 지연을 두어 모달 닫기 애니메이션이 완료된 후 리다이렉트
+      setTimeout(() => {
+        router.push(redirectPath)
+        router.refresh()
+      }, 100)
     }
   }
 

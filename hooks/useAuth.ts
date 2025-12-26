@@ -29,14 +29,20 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: LoginResponse = await login(credentials);
 
-        // 네비게이션 바 업데이트를 위한 이벤트 발생
+        // 네비게이션 바 업데이트를 위한 이벤트 발생 (즉시 업데이트)
         if (typeof window !== 'undefined') {
+          // 이벤트를 여러 번 발생시켜 Navbar가 확실히 업데이트되도록 함
           window.dispatchEvent(new Event('auth-change'));
+          // 약간의 지연 후 다시 발생 (쿠키 설정 대기)
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
+          }, 100);
         }
 
-        // 홈페이지로 리다이렉트
-        router.push('/');
-        router.refresh();
+        // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해
+        // 여기서는 리다이렉트하지 않고, 성공 모달에서 처리하도록 함
+        // router.push('/profile');
+        // router.refresh();
       } catch (err: unknown) {
         // err가 이미 ErrorResponse인지 확인
         if (err && typeof err === 'object' && 'message' in err) {

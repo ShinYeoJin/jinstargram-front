@@ -7,13 +7,15 @@ const translateError = (errorMessage: string): string => {
   const errorLower = errorMessage.toLowerCase()
   
   // RLS 정책 오류
-  if (errorLower.includes('row-level security') || errorLower.includes('rlp')) {
-    return '이미지 업로드 권한이 없습니다. Supabase Storage의 보안 정책 설정을 확인해주세요.'
+  if (errorLower.includes('row-level security') || errorLower.includes('rlp') || 
+      errorLower.includes('new row violates row-level security')) {
+    return '이미지 업로드 권한이 없습니다. Supabase Storage의 보안 정책(RLS)을 설정해주세요. Storage > images > Policies에서 Public 정책을 추가해주세요.'
   }
   
   // 인증 오류
-  if (errorLower.includes('unauthorized') || errorLower.includes('permission denied')) {
-    return '이미지 업로드 권한이 없습니다. 로그인 후 다시 시도해주세요.'
+  if (errorLower.includes('unauthorized') || errorLower.includes('permission denied') ||
+      errorLower.includes('forbidden')) {
+    return '이미지 업로드 권한이 없습니다. Supabase Storage의 보안 정책(RLS)을 설정해주세요. Storage > images > Policies에서 Public 정책을 추가해주세요.'
   }
   
   // 버킷 없음
@@ -31,8 +33,8 @@ const translateError = (errorMessage: string): string => {
     return '네트워크 연결에 문제가 있습니다. 인터넷 연결을 확인하고 다시 시도해주세요.'
   }
   
-  // 기본 메시지
-  return '이미지 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.'
+  // 기본 메시지 (400 에러는 대부분 RLS 정책 문제)
+  return '이미지 업로드에 실패했습니다. Supabase Storage의 보안 정책(RLS)을 설정해주세요. Storage > images > Policies에서 Public 정책을 추가해주세요.'
 }
 
 /**
@@ -70,6 +72,20 @@ export const uploadImage = async (
       })
 
     if (error) {
+      // 상세 에러 로깅 (개발 환경에서만)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Supabase Storage 업로드 에러:', {
+          message: error.message,
+          statusCode: error.statusCode,
+          error: error,
+        })
+      }
+      
+      // 400 에러는 RLS 정책 문제일 가능성이 높음
+      if (error.statusCode === 400 || error.statusCode === 403) {
+        throw new Error('이미지 업로드 권한이 없습니다. Supabase Storage의 보안 정책(RLS)을 설정해주세요. Storage > images > Policies에서 Public 정책을 추가해주세요.')
+      }
+      
       // 에러 메시지를 한글로 변환
       const translatedMessage = translateError(error.message)
       throw new Error(translatedMessage)

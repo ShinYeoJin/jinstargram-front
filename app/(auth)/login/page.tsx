@@ -1,12 +1,15 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import FormField from '@/components/ui/FormField'
+import SuccessModal from '@/components/ui/SuccessModal'
 import { useAuth } from '@/hooks/useAuth'
 import styles from './login.module.css'
 
 export default function LoginPage() {
   const { isLoading, error, login, clearError } = useAuth()
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +34,8 @@ export default function LoginPage() {
         id: username,
         password: password,
       })
+      // 로그인 성공 시 성공 모달 표시
+      setIsSuccessModalOpen(true)
     } catch (err) {
       // 에러는 useAuth 훅에서 처리됨
       console.error('로그인 에러:', err)
@@ -87,6 +92,16 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+
+      {/* 로그인 성공 모달 */}
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        title="로그인 완료"
+        message="로그인되었습니다."
+        buttonText="확인"
+        redirectPath="/profile"
+      />
     </div>
   )
 }

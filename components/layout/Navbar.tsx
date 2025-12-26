@@ -18,7 +18,7 @@ export default function Navbar() {
     const checkAuth = async () => {
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
       try {
-        const profileData = await getProfile()
+        const profileData = await getProfile(true) // silent 모드로 호출 (401 에러 조용히 처리)
         setProfile(profileData)
         setIsLoggedIn(true)
       } catch (error: any) {
@@ -33,11 +33,15 @@ export default function Navbar() {
       }
     }
 
+    // 초기 인증 상태 확인
     checkAuth()
 
     // 인증 상태 변경 감지를 위한 이벤트 리스너
     const handleAuthChange = () => {
-      checkAuth()
+      // 이벤트 발생 시 약간의 지연 후 인증 상태 확인 (쿠키 설정 대기)
+      setTimeout(() => {
+        checkAuth()
+      }, 200)
     }
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)

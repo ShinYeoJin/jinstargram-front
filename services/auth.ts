@@ -46,6 +46,14 @@ export const login = async (
     );
 
     // 토큰은 백엔드에서 쿠키로 설정되므로 프론트엔드에서는 별도 저장 불필요
+    // 디버깅: 로그인 성공 확인 (개발 환경에서만)
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      console.log('[Login] 로그인 성공, 쿠키가 자동으로 설정되었습니다.', {
+        user: response.data.user,
+        // 쿠키는 HttpOnly이므로 JavaScript로 접근 불가 (보안상 정상)
+      });
+    }
+    
     // 응답 데이터만 반환
     return response.data;
   } catch (error: any) {
@@ -92,21 +100,25 @@ export const logout = async (): Promise<void> => {
 
 /**
  * 프로필 조회 API
+ * @param silent - true면 401 에러를 조용히 처리 (Navbar 등에서 사용), false면 정상 에러로 처리 (프로필 페이지 등에서 사용)
  * @returns 사용자 프로필 정보
  * @throws 에러 발생 시 에러 객체
  */
-export const getProfile = async (): Promise<ProfileResponse> => {
+export const getProfile = async (silent: boolean = false): Promise<ProfileResponse> => {
   try {
     const response = await apiClient.get<ProfileResponse>('/auth/profile');
     return response.data;
   } catch (error: any) {
-    // 401 에러는 로그인하지 않은 상태이므로 조용히 처리
-    if (error?.response?.status === 401 || error?.statusCode === 401) {
+    // silent 모드일 때만 401 에러를 조용히 처리 (Navbar 등)
+    // 프로필 페이지에서는 정상 에러로 처리
+    if (silent && (error?.response?.status === 401 || error?.statusCode === 401)) {
       // 401 에러를 조용히 처리하기 위해 특별한 에러 객체 생성
       const silentError: any = new Error('Unauthorized');
       silentError.statusCode = 401;
       silentError.response = { status: 401 };
       silentError.isSilent = true; // 조용한 에러 플래그
+      // 에러 스택을 제거하여 콘솔에 표시되지 않도록 함
+      silentError.stack = undefined;
       throw silentError;
     }
     throw handleApiError(error);
