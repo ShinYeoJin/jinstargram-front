@@ -69,7 +69,10 @@ apiClient.interceptors.response.use(
     
     // 프로필 요청의 401 에러는 조용히 처리 (로그인하지 않은 상태)
     if (isProfileRequest && error.response?.status === 401) {
-      return Promise.reject(error);
+      // 조용한 에러 플래그 추가
+      const silentError: any = error;
+      silentError.isSilent = true;
+      return Promise.reject(silentError);
     }
     
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint && !isProfileRequest) {

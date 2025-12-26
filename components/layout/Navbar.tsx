@@ -26,7 +26,10 @@ export default function Navbar() {
         // 네트워크 에러나 기타 에러도 조용히 처리
         setProfile(null)
         setIsLoggedIn(false)
-        // 콘솔에 에러를 출력하지 않음 (로그인하지 않은 상태는 정상)
+        // 조용한 에러가 아닌 경우에만 콘솔에 출력 (실제 에러만)
+        if (!error?.isSilent && error?.statusCode !== 401 && error?.response?.status !== 401) {
+          // 실제 에러만 콘솔에 출력 (401은 정상)
+        }
       }
     }
 

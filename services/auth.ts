@@ -100,6 +100,15 @@ export const getProfile = async (): Promise<ProfileResponse> => {
     const response = await apiClient.get<ProfileResponse>('/auth/profile');
     return response.data;
   } catch (error: any) {
+    // 401 에러는 로그인하지 않은 상태이므로 조용히 처리
+    if (error?.response?.status === 401 || error?.statusCode === 401) {
+      // 401 에러를 조용히 처리하기 위해 특별한 에러 객체 생성
+      const silentError: any = new Error('Unauthorized');
+      silentError.statusCode = 401;
+      silentError.response = { status: 401 };
+      silentError.isSilent = true; // 조용한 에러 플래그
+      throw silentError;
+    }
     throw handleApiError(error);
   }
 };
