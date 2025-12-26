@@ -31,27 +31,15 @@ export default function ProfilePage() {
     (message) => showToast(message, 'error')
   )
 
-  if (isLoading) {
+  // AuthGuard가 이미 인증을 확인했으므로, 여기서는 profile 데이터만 처리
+  // profile이 없으면 로딩 상태 유지 (에러 메시지 표시하지 않음)
+  if (isLoading || !profile) {
     return (
       <AuthGuard>
         <div className={styles.container}>
           <div className={styles.content}>
             <div style={{ textAlign: 'center', padding: '2rem' }}>
               <p>로딩 중...</p>
-            </div>
-          </div>
-        </div>
-      </AuthGuard>
-    )
-  }
-
-  if (error || !profile) {
-    return (
-      <AuthGuard>
-        <div className={styles.container}>
-          <div className={styles.content}>
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-              <p style={{ color: 'red' }}>{error || '프로필을 불러올 수 없습니다.'}</p>
             </div>
           </div>
         </div>

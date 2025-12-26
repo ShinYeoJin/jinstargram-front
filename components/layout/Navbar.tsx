@@ -8,41 +8,35 @@ import type { ProfileResponse } from '@/types/auth'
 import styles from './Navbar.module.css'
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  // auth 상태: null(unknown) → true(authenticated) → false(unauthenticated)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+  // profile 데이터는 auth와 분리하여 관리
   const [profile, setProfile] = useState<ProfileResponse | null>(null)
   const router = useRouter()
   const pathname = usePathname()
 
-  // 로그인 상태 확인 및 프로필 데이터 가져오기
+  // 인증 상태 확인 (auth와 profile 분리)
   useEffect(() => {
     const checkAuth = async () => {
-      // localStorage에서 로그인 플래그 확인 (즉시 업데이트를 위해)
-      const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
-      const wasLoggedIn = loginFlag === 'true'
-
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
+      // localStorage 플래그는 힌트일 뿐, 실제 인증은 API로 확인
       try {
         const profileData = await getProfile(true) // silent 모드로 호출 (401 에러 조용히 처리)
-        setProfile(profileData)
+        // API 성공 = 인증 성공
         setIsLoggedIn(true)
-        // 로그인 성공 시 플래그 저장
+        setProfile(profileData) // profile 데이터는 별도로 관리
+        // 로그인 성공 시 플래그 저장 (다음 렌더링 시 힌트로 사용)
         if (typeof window !== 'undefined') {
           localStorage.setItem('isLoggedIn', 'true')
         }
       } catch (error: any) {
-        // localStorage 플래그가 있으면 로그인 상태 유지 (쿠키 설정 지연 대응)
-        if (wasLoggedIn) {
-          // 플래그가 있으면 로그인 상태 유지 (API 호출 실패해도)
-          setIsLoggedIn(true)
-          // 프로필은 나중에 다시 시도할 수 있도록 null 유지
-        } else {
-          // 플래그가 없으면 로그아웃 상태
-          setProfile(null)
-          setIsLoggedIn(false)
-          // 로그아웃 시 플래그 제거
-          if (typeof window !== 'undefined') {
-            localStorage.removeItem('isLoggedIn')
-          }
+        // API 실패 = 인증 실패 (401 에러)
+        // localStorage 플래그는 무시하고 실제 API 결과를 신뢰
+        setIsLoggedIn(false)
+        setProfile(null)
+        // 로그아웃 시 플래그 제거
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isLoggedIn')
         }
         // 조용한 에러가 아닌 경우에만 콘솔에 출력 (실제 에러만)
         if (!error?.isSilent && error?.statusCode !== 401 && error?.response?.status !== 401) {
@@ -109,7 +103,8 @@ export default function Navbar() {
         JInstargram
         </Link>
         <div className="nav-links">
-          {isLoggedIn ? (
+          {/* auth 상태가 null이면 아직 확인 중이므로 아무것도 표시하지 않음 */}
+          {isLoggedIn === true ? (
             <>
               <Link href="/profile" className={styles.profileLink}>
                 <span className={styles.profileText}>프로필</span>
@@ -138,12 +133,12 @@ export default function Navbar() {
                 로그아웃
               </button>
             </>
-          ) : (
+          ) : isLoggedIn === false ? (
             <>
               <Link href="/login">로그인</Link>
               <Link href="/signup">회원가입</Link>
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </nav>

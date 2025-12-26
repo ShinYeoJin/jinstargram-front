@@ -47,70 +47,68 @@ export function useProfile(
     setFollowingCount(initialFollowingCount);
   }, []);
 
-  // 프로필 데이터 로드
+  // 프로필 데이터 로드 (auth와 분리)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         setIsLoading(true);
         setError(null); // 에러 초기화
         
-        // localStorage에서 로그인 플래그 확인 (Navbar와 동일한 방식)
-        const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
-        const wasLoggedIn = loginFlag === 'true'
-        
         // 쿠키 기반 인증: getProfile 호출 (쿠키는 자동으로 전송됨)
-        const data = await getProfile(true); // silent=true: localStorage 플래그가 있으면 에러 무시
+        // profile fetch 실패는 auth 실패와 분리하여 처리
+        const data = await getProfile(true); // silent=true: 401은 조용히 처리
         setProfile(data);
+        setError(null);
         
-        // 로그인 성공 시 플래그 저장
+        // 로그인 성공 시 플래그 저장 (다음 렌더링 시 힌트로 사용)
         if (typeof window !== 'undefined') {
           localStorage.setItem('isLoggedIn', 'true')
         }
       } catch (err: unknown) {
-        // localStorage 플래그 확인
-        const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
-        const wasLoggedIn = loginFlag === 'true'
+        // profile fetch 실패를 auth 실패로 처리하지 않음
+        // AuthGuard가 이미 인증을 확인했으므로, 여기서는 profile 데이터만 처리
+        const errorResponse = err as any;
         
-        // 플래그가 있으면 쿠키 설정 지연으로 인한 일시적 에러로 간주
-        if (wasLoggedIn) {
-          // 플래그가 있으면 에러를 표시하지 않고 나중에 다시 시도
-          // 프로필은 null로 유지하되 에러 메시지는 표시하지 않음
+        // 401 에러는 인증 실패이므로 AuthGuard가 처리 (여기서는 조용히 처리)
+        if (errorResponse?.response?.status === 401 || errorResponse?.statusCode === 401) {
+          // 인증 실패는 AuthGuard가 처리하므로 여기서는 에러 표시하지 않음
           setError(null);
-          // 잠시 후 다시 시도 (쿠키 설정 대기)
-          setTimeout(() => {
-            const retryFetch = async () => {
-              try {
-                const data = await getProfile(true);
-                setProfile(data);
-                setError(null);
-              } catch (retryErr) {
-                // 재시도 실패해도 플래그가 있으면 에러 표시하지 않음
-                console.error('프로필 재시도 에러:', retryErr);
-              }
-            };
-            retryFetch();
-          }, 1000);
+          setProfile(null);
+          setIsLoading(false);
         } else {
-          // 플래그가 없으면 실제 에러로 처리
+          // 네트워크 에러 등 다른 에러는 profile fetch 실패로 처리
+          // 재시도 로직 추가 (auth와 분리)
           console.error('프로필 조회 에러:', err);
-          const errorResponse = err as any;
-          let errorMessage = '프로필을 불러오는데 실패했습니다.';
+          setError(null); // 에러 메시지 표시하지 않음
+          setProfile(null);
           
-          // 에러 메시지 추출
-          if (errorResponse?.message) {
-            errorMessage = errorResponse.message;
-          } else if (errorResponse?.response?.data?.message) {
-            errorMessage = Array.isArray(errorResponse.response.data.message)
-              ? errorResponse.response.data.message.join(', ')
-              : errorResponse.response.data.message;
-          } else if (err instanceof Error) {
-            errorMessage = err.message;
-          }
+          // 재시도 (쿠키 설정 지연 대응)
+          let retryCount = 0;
+          const maxRetries = 3;
+          const retryDelay = 1000; // 1초
           
-          setError(errorMessage);
+          const retryFetch = async () => {
+            if (retryCount >= maxRetries) {
+              setIsLoading(false);
+              return;
+            }
+            
+            retryCount++;
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            
+            try {
+              const data = await getProfile(true);
+              setProfile(data);
+              setError(null);
+              setIsLoading(false);
+            } catch (retryErr) {
+              // 재시도 실패 시 다시 시도
+              retryFetch();
+            }
+          };
+          
+          retryFetch();
         }
-      } finally {
-        setIsLoading(false);
       }
     };
 
