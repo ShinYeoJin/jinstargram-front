@@ -22,17 +22,11 @@ export default function Navbar() {
         setProfile(profileData)
         setIsLoggedIn(true)
       } catch (error: any) {
-        // 401 에러는 로그인하지 않은 상태이므로 조용히 처리
-        if (error?.statusCode === 401 || error?.response?.status === 401) {
-          setProfile(null)
-          setIsLoggedIn(false)
-          // 401 에러는 정상적인 상황이므로 콘솔에 에러를 출력하지 않음
-          return
-        }
-        // 그 외의 에러만 콘솔에 출력
-        console.error('프로필 로드 에러:', error)
+        // 모든 에러를 조용히 처리 (401은 로그인하지 않은 상태, 정상)
+        // 네트워크 에러나 기타 에러도 조용히 처리
         setProfile(null)
         setIsLoggedIn(false)
+        // 콘솔에 에러를 출력하지 않음 (로그인하지 않은 상태는 정상)
       }
     }
 

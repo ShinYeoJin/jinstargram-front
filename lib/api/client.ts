@@ -67,6 +67,11 @@ apiClient.interceptors.response.use(
                            originalRequest?.url?.includes('/auth/login');
     const isProfileRequest = originalRequest?.url?.includes('/auth/profile');
     
+    // 프로필 요청의 401 에러는 조용히 처리 (로그인하지 않은 상태)
+    if (isProfileRequest && error.response?.status === 401) {
+      return Promise.reject(error);
+    }
+    
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint && !isProfileRequest) {
       if (isRefreshing) {
         // 이미 토큰 갱신 중이면 대기열에 추가
