@@ -42,13 +42,16 @@ export default function Navbar() {
       checkAuth()
       setTimeout(() => {
         checkAuth()
-      }, 300)
+      }, 200)
       setTimeout(() => {
         checkAuth()
-      }, 800)
+      }, 500)
       setTimeout(() => {
         checkAuth()
-      }, 1500)
+      }, 1000)
+      setTimeout(() => {
+        checkAuth()
+      }, 2000)
     }
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)
@@ -61,19 +64,35 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
+      // 로그아웃 API 호출
       await logout()
+      
+      // 상태 즉시 업데이트
+      setIsLoggedIn(false)
+      setProfile(null)
+      
+      // 로그아웃 이벤트 발생 (다른 컴포넌트도 업데이트되도록)
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth-change'))
+      }
+      
+      // 로그인 페이지로 리다이렉트
+      router.push('/login')
+      router.refresh()
     } catch (error) {
       console.error('로그아웃 에러:', error)
-    } finally {
+      // 에러가 발생해도 상태는 업데이트
       setIsLoggedIn(false)
+      setProfile(null)
       
       // 로그아웃 이벤트 발생
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('auth-change'))
       }
       
+      // 로그인 페이지로 리다이렉트
       router.push('/login')
-      router.refresh() // 페이지 새로고침
+      router.refresh()
     }
   }
 
