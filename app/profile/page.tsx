@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import AuthGuard from '@/components/auth/AuthGuard'
 import ProfileHeader from '@/components/profile/ProfileHeader'
 import UserList from '@/components/profile/UserList'
@@ -12,6 +14,7 @@ import styles from './profile.module.css'
 
 export default function ProfilePage() {
   const { showToast, removeToast, toasts } = useToast()
+  const searchParams = useSearchParams()
   const {
     profile,
     isLoading,
@@ -30,6 +33,15 @@ export default function ProfilePage() {
     (message) => showToast(message, 'success'),
     (message) => showToast(message, 'error')
   )
+
+  // 로그인 후 리다이렉트된 경우 성공 메시지 표시
+  useEffect(() => {
+    if (searchParams.get('login') === 'success') {
+      showToast('로그인되었습니다.', 'success')
+      // URL에서 파라미터 제거
+      window.history.replaceState({}, '', '/profile')
+    }
+  }, [searchParams, showToast])
 
   if (isLoading) {
     return (

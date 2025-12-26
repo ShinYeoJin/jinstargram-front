@@ -38,10 +38,11 @@ export default function Navbar() {
 
     // 인증 상태 변경 감지를 위한 이벤트 리스너
     const handleAuthChange = () => {
-      // 이벤트 발생 시 약간의 지연 후 인증 상태 확인 (쿠키 설정 대기)
+      // 이벤트 발생 시 즉시 확인하고, 지연 후 다시 확인 (쿠키 설정 대기)
+      checkAuth()
       setTimeout(() => {
         checkAuth()
-      }, 200)
+      }, 500)
     }
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)
