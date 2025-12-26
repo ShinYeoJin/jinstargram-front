@@ -57,18 +57,18 @@ export function useSignupForm() {
           
           // uploadImageFile이 undefined를 반환하면 업로드 실패
           if (profileImageUrl === undefined) {
-            // uploadError 상태를 직접 확인 (비동기 업데이트를 위해 약간의 지연)
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // 업로드 실패 시 에러 메시지 확인
+            await new Promise(resolve => setTimeout(resolve, 100)); // 비동기 상태 업데이트 대기
             const errorMsg = imageUpload.uploadError || '이미지 업로드에 실패했습니다.';
             setGeneralError(errorMsg);
-            return;
+            return; // 회원가입 중단
           }
         } catch (error: unknown) {
           const errorMessage = error instanceof Error 
             ? error.message 
             : '이미지 업로드에 실패했습니다.';
           setGeneralError(errorMessage);
-          return;
+          return; // 회원가입 중단
         }
       }
       // 이미지가 선택되지 않은 경우 profileImageUrl은 undefined로 유지 (정상)
