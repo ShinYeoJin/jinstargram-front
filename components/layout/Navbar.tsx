@@ -16,16 +16,31 @@ export default function Navbar() {
   // 로그인 상태 확인 및 프로필 데이터 가져오기
   useEffect(() => {
     const checkAuth = async () => {
+      // localStorage에서 로그인 플래그 확인 (즉시 업데이트를 위해)
+      const loginFlag = typeof window !== 'undefined' ? localStorage.getItem('isLoggedIn') : null
+      if (loginFlag === 'true') {
+        // 플래그가 있으면 즉시 로그인 상태로 설정하고 프로필 가져오기
+        setIsLoggedIn(true)
+      }
+
       // 쿠키 방식: API 호출로 인증 상태 확인 (쿠키는 자동으로 전송됨)
       try {
         const profileData = await getProfile(true) // silent 모드로 호출 (401 에러 조용히 처리)
         setProfile(profileData)
         setIsLoggedIn(true)
+        // 로그인 성공 시 플래그 저장
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('isLoggedIn', 'true')
+        }
       } catch (error: any) {
         // 모든 에러를 조용히 처리 (401은 로그인하지 않은 상태, 정상)
         // 네트워크 에러나 기타 에러도 조용히 처리
         setProfile(null)
         setIsLoggedIn(false)
+        // 로그아웃 시 플래그 제거
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('isLoggedIn')
+        }
         // 조용한 에러가 아닌 경우에만 콘솔에 출력 (실제 에러만)
         if (!error?.isSilent && error?.statusCode !== 401 && error?.response?.status !== 401) {
           // 실제 에러만 콘솔에 출력 (401은 정상)
@@ -45,8 +60,15 @@ export default function Navbar() {
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)
     window.addEventListener('auth-change', handleAuthChange)
 
+    // 페이지 포커스 시에도 상태 확인 (다른 탭에서 로그인한 경우)
+    const handleFocus = () => {
+      checkAuth()
+    }
+    window.addEventListener('focus', handleFocus)
+
     return () => {
       window.removeEventListener('auth-change', handleAuthChange)
+      window.removeEventListener('focus', handleFocus)
     }
   }, [pathname]) // pathname이 변경될 때마다 확인 (페이지 이동 시 자동으로 상태 확인)
 
@@ -54,26 +76,19 @@ export default function Navbar() {
     try {
       // 로그아웃 API 호출
       await logout()
-      
+    } catch (error) {
+      console.error('로그아웃 에러:', error)
+    } finally {
       // 상태 즉시 업데이트
       setIsLoggedIn(false)
       setProfile(null)
       
-      // 로그아웃 이벤트 발생 (다른 컴포넌트도 업데이트되도록)
+      // localStorage에서 로그인 플래그 제거
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('auth-change'))
+        localStorage.removeItem('isLoggedIn')
       }
       
-      // 로그인 페이지로 리다이렉트
-      router.push('/login')
-      router.refresh()
-    } catch (error) {
-      console.error('로그아웃 에러:', error)
-      // 에러가 발생해도 상태는 업데이트
-      setIsLoggedIn(false)
-      setProfile(null)
-      
-      // 로그아웃 이벤트 발생
+      // 로그아웃 이벤트 발생 (다른 컴포넌트도 업데이트되도록)
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('auth-change'))
       }

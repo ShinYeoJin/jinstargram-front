@@ -29,6 +29,11 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: LoginResponse = await login(credentials);
 
+        // localStorage에 로그인 플래그 저장 (즉시 Navbar 업데이트를 위해)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('isLoggedIn', 'true')
+        }
+
         // 네비게이션 바 업데이트를 위한 이벤트 발생 (즉시 업데이트)
         if (typeof window !== 'undefined') {
           // 이벤트를 여러 번 발생시켜 Navbar가 확실히 업데이트되도록 함
@@ -40,15 +45,6 @@ export function useAuth(): UseAuthReturn {
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'));
           }, 500);
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 1000);
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 2000);
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 3000);
         }
 
         // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해

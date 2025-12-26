@@ -30,14 +30,21 @@ export default function SuccessModal({
     // 리다이렉트는 모달이 닫힌 후에 실행
     if (redirectPath) {
       // 약간의 지연을 두어 모달 닫기 애니메이션이 완료된 후 리다이렉트
+      // Navbar 업데이트를 위한 이벤트 발생
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('auth-change'))
+      }
       setTimeout(() => {
-        // 페이지를 완전히 새로고침하여 Navbar가 확실히 업데이트되도록 함
-        if (redirectPath === '/') {
-          // 메인 페이지로 이동 후 새로고침
-          window.location.href = '/'
-        } else {
-          window.location.href = redirectPath
-        }
+        // router.push를 사용하되, 페이지를 새로고침하여 Navbar가 확실히 업데이트되도록 함
+        router.push(redirectPath)
+        // 짧은 지연 후 새로고침 (Navbar가 상태를 확인할 시간 확보)
+        setTimeout(() => {
+          router.refresh()
+          // 추가로 auth-change 이벤트 발생
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new Event('auth-change'))
+          }
+        }, 100)
       }, 200)
     }
   }
