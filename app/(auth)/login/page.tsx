@@ -100,7 +100,7 @@ export default function LoginPage() {
         title="로그인 완료"
         message="로그인되었습니다."
         buttonText="확인"
-        redirectPath="/profile"
+        redirectPath="/"
       />
     </div>
   )
