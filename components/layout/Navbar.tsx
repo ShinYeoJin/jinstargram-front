@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthContext } from '@/contexts/AuthContext'
@@ -10,6 +11,12 @@ export default function Navbar() {
   const { isLoggedIn, profile, handleLogout } = useAuthContext()
   const router = useRouter()
   const pathname = usePathname()
+
+  // Context 인스턴스 ID 확인 (런타임 증명용)
+  useEffect(() => {
+    const ctxId = typeof window !== 'undefined' ? (window as any).__AUTH_CTX_ID : 'N/A'
+    console.log('[Navbar] auth', isLoggedIn, ctxId)
+  }, [isLoggedIn])
 
   const onLogout = async () => {
     await handleLogout()

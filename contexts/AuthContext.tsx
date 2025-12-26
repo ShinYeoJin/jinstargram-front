@@ -19,6 +19,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
   const [profile, setProfile] = useState<ProfileResponse | null>(null)
 
+  // Context 인스턴스 ID 생성 및 저장 (런타임 증명용)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const ctxId = Math.random().toString(36).substring(2, 15)
+      ;(window as any).__AUTH_CTX_ID = ctxId
+      console.log('[AuthProvider] mounted', ctxId)
+    }
+  }, [])
+
   // 인증 상태 확인 함수
   const checkAuth = useCallback(async () => {
     try {
@@ -43,6 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 로그인 성공 시 즉시 상태 업데이트 (API 호출 전)
   const setLoggedIn = useCallback((value: boolean) => {
+    const ctxId = typeof window !== 'undefined' ? (window as any).__AUTH_CTX_ID : 'N/A'
+    console.log('[Login] setLoggedIn', value, ctxId)
     setIsLoggedIn(value)
     if (!value) {
       setProfile(null)
