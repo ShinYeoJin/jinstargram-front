@@ -1,23 +1,22 @@
 /**
- * 인증 관련 커스텀 훅
+ * 인증 관련 커스텀 훅 (로그인 액션만 제공)
  */
 
 import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { login, logout as logoutService } from '@/services/auth';
+import { login } from '@/services/auth';
 import type { LoginRequest, LoginResponse } from '@/types/auth';
 import { getErrorMessage } from '@/lib/utils/errorHandler';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export interface UseAuthReturn {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginRequest) => Promise<void>;
-  logout: () => Promise<void>;
   clearError: () => void;
 }
 
 export function useAuth(): UseAuthReturn {
-  const router = useRouter();
+  const { checkAuth } = useAuthContext(); // AuthContext에서 checkAuth 가져오기
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,25 +28,26 @@ export function useAuth(): UseAuthReturn {
       try {
         const response: LoginResponse = await login(credentials);
 
-        // localStorage에 로그인 플래그 저장 (즉시 Navbar 업데이트를 위해)
+        // localStorage에 로그인 플래그 저장
         if (typeof window !== 'undefined') {
           localStorage.setItem('isLoggedIn', 'true')
         }
 
-        // 네비게이션 바 업데이트를 위한 이벤트 발생 (즉시 업데이트)
+        // AuthContext의 checkAuth를 호출하여 Navbar 상태 즉시 업데이트
+        // 쿠키 설정 대기를 위해 약간의 지연 후 호출
+        setTimeout(() => {
+          checkAuth()
+        }, 100)
+        setTimeout(() => {
+          checkAuth()
+        }, 300)
+        setTimeout(() => {
+          checkAuth()
+        }, 600)
+
+        // auth-change 이벤트도 발생 (다른 컴포넌트 업데이트용)
         if (typeof window !== 'undefined') {
-          // 이벤트를 여러 번 발생시켜 Navbar가 확실히 업데이트되도록 함
           window.dispatchEvent(new Event('auth-change'));
-          // 약간의 지연 후 다시 발생 (쿠키 설정 대기)
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 200);
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 500);
-          setTimeout(() => {
-            window.dispatchEvent(new Event('auth-change'));
-          }, 1000);
         }
 
         // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해
@@ -74,24 +74,8 @@ export function useAuth(): UseAuthReturn {
         setIsLoading(false);
       }
     },
-    [router]
+    [checkAuth]
   );
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await logoutService();
-      
-      // 네비게이션 바 업데이트를 위한 이벤트 발생
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('auth-change'));
-      }
-
-      router.push('/login');
-      router.refresh();
-    } catch (err) {
-      console.error('로그아웃 에러:', err);
-    }
-  }, [router]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -101,7 +85,6 @@ export function useAuth(): UseAuthReturn {
     isLoading,
     error,
     login: handleLogin,
-    logout: handleLogout,
     clearError,
   };
 }

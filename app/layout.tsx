@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_KR } from 'next/font/google'
 import Navbar from '@/components/layout/Navbar'
+import { AuthProvider } from '@/contexts/AuthContext'
 import './globals.css'
 
 const notoSansKR = Noto_Sans_KR({
@@ -27,8 +28,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={notoSansKR.className}>
-        <Navbar />
-        <main>{children}</main>
+        <AuthProvider>
+          <Navbar />
+          <main>{children}</main>
+        </AuthProvider>
       </body>
     </html>
   )
