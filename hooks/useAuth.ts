@@ -36,10 +36,19 @@ export function useAuth(): UseAuthReturn {
           // 약간의 지연 후 다시 발생 (쿠키 설정 대기)
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'));
+          }, 200);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
           }, 500);
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'));
           }, 1000);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
+          }, 2000);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'));
+          }, 3000);
         }
 
         // 성공 모달이 표시된 후 리다이렉트하도록 하기 위해

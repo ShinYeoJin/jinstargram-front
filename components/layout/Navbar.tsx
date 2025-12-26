@@ -42,16 +42,22 @@ export default function Navbar() {
       checkAuth()
       setTimeout(() => {
         checkAuth()
-      }, 200)
+      }, 100)
       setTimeout(() => {
         checkAuth()
-      }, 500)
+      }, 300)
+      setTimeout(() => {
+        checkAuth()
+      }, 600)
       setTimeout(() => {
         checkAuth()
       }, 1000)
       setTimeout(() => {
         checkAuth()
       }, 2000)
+      setTimeout(() => {
+        checkAuth()
+      }, 3000)
     }
     
     // 커스텀 이벤트 (로그인/로그아웃 시 발생)

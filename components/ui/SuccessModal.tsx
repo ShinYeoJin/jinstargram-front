@@ -36,6 +36,9 @@ export default function SuccessModal({
         setTimeout(() => {
           window.dispatchEvent(new Event('auth-change'))
         }, 100)
+        setTimeout(() => {
+          window.dispatchEvent(new Event('auth-change'))
+        }, 300)
       }
       setTimeout(() => {
         router.push(redirectPath)
@@ -44,13 +47,19 @@ export default function SuccessModal({
         if (typeof window !== 'undefined') {
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'))
-          }, 300)
+          }, 200)
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'))
-          }, 800)
+          }, 500)
           setTimeout(() => {
             window.dispatchEvent(new Event('auth-change'))
-          }, 1500)
+          }, 1000)
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'))
+          }, 2000)
+          setTimeout(() => {
+            window.dispatchEvent(new Event('auth-change'))
+          }, 3000)
         }
       }, 200)
     }
