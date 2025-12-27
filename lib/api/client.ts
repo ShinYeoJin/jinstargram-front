@@ -77,10 +77,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     
     // 401 에러이고 아직 재시도하지 않은 경우
-    // 회원가입/로그인 엔드포인트는 토큰 갱신을 시도하지 않음
-    // 프로필 요청의 401은 로그인하지 않은 상태이므로 토큰 갱신 시도하지 않음
+    // 토큰 갱신을 시도하지 않는 엔드포인트들
     const isAuthEndpoint = originalRequest?.url?.includes('/auth/signup') || 
-                           originalRequest?.url?.includes('/auth/login');
+                           originalRequest?.url?.includes('/auth/login') ||
+                           originalRequest?.url?.includes('/auth/logout') ||
+                           originalRequest?.url?.includes('/auth/refresh');
     const isProfileRequest = originalRequest?.url?.includes('/auth/profile');
     
     // 프로필 요청의 401 에러는 조용히 처리 (로그인하지 않은 상태)
