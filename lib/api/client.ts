@@ -4,10 +4,13 @@ import { API_TIMEOUT } from '@/lib/constants';
 // API 기본 URL 설정
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-// 디버깅: 환경 변수 확인 (개발 환경에서만)
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  console.log('API_BASE_URL:', API_BASE_URL);
-  console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+// 디버깅: 환경 변수 확인 (항상 로깅 - 배포 문제 디버깅용)
+if (typeof window !== 'undefined') {
+  console.log('[API Client] Configuration:', {
+    API_BASE_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NODE_ENV: process.env.NODE_ENV,
+  });
 }
 
 // Axios 인스턴스 생성
@@ -25,11 +28,10 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // 쿠키는 withCredentials: true로 자동 전송됨
-    // 디버깅: 쿠키 전송 확인 (개발 환경에서만)
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`, {
+    // 디버깅: 모든 요청 로깅 (배포 문제 디버깅용)
+    if (typeof window !== 'undefined') {
+      console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
         withCredentials: config.withCredentials,
-        baseURL: config.baseURL,
       });
     }
     return config;
@@ -61,11 +63,10 @@ const processQueue = (error: any, token: string | null = null) => {
 // 응답 인터셉터: 에러 처리 및 토큰 자동 갱신
 apiClient.interceptors.response.use(
   (response) => {
-    // 디버깅: 성공 응답 확인 (개발 환경에서만)
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    // 디버깅: 모든 응답 로깅 (배포 문제 디버깅용)
+    if (typeof window !== 'undefined') {
       console.log(`[API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`, {
         status: response.status,
-        statusText: response.statusText,
       });
     }
     return response;
