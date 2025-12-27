@@ -23,15 +23,17 @@ export const apiClient = axios.create({
   withCredentials: true, // 쿠키를 포함하여 요청 전송
 });
 
-// 요청 인터셉터: 쿠키는 자동으로 전송되므로 별도 처리 불필요
-// HttpOnly 쿠키는 JavaScript로 접근할 수 없으므로 백엔드에서 처리
+// 요청 인터셉터: Authorization 헤더 추가
 apiClient.interceptors.request.use(
   (config) => {
-    // 쿠키는 withCredentials: true로 자동 전송됨
-    // 디버깅: 모든 요청 로깅 (배포 문제 디버깅용)
+    // ✅ localStorage에서 토큰 읽어서 Authorization 헤더 추가
     if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
-        withCredentials: config.withCredentials,
+        hasToken: !!token,
       });
     }
     return config;

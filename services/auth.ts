@@ -45,16 +45,15 @@ export const login = async (
       loginData
     );
 
-    // 토큰은 백엔드에서 쿠키로 설정되므로 프론트엔드에서는 별도 저장 불필요
-    // 디버깅: 로그인 성공 확인 (개발 환경에서만)
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      console.log('[Login] 로그인 성공, 쿠키가 자동으로 설정되었습니다.', {
-        user: response.data.user,
-        // 쿠키는 HttpOnly이므로 JavaScript로 접근 불가 (보안상 정상)
-      });
+    // ✅ 토큰을 localStorage에 저장 (Authorization header 방식)
+    if (typeof window !== 'undefined' && response.data.access_token) {
+      localStorage.setItem('access_token', response.data.access_token);
+      if (response.data.refresh_token) {
+        localStorage.setItem('refresh_token', response.data.refresh_token);
+      }
+      console.log('[Login] 토큰 저장 완료');
     }
     
-    // 응답 데이터만 반환
     return response.data;
   } catch (error: any) {
     throw handleApiError(error);
@@ -84,18 +83,18 @@ export const refreshToken = async (): Promise<RefreshTokenResponse> => {
 /**
  * 로그아웃
  * 토큰 제거 및 서버에 로그아웃 요청
- * Access Token이 만료되어도 Refresh Token만으로 로그아웃 가능
  */
 export const logout = async (): Promise<void> => {
   try {
-    // 서버에 로그아웃 요청 (쿠키에서 자동으로 토큰 읽어서 처리)
-    // Refresh Token은 쿠키에 저장되어 있으므로 body에 포함하지 않음
     await apiClient.post('/auth/logout');
   } catch (error: any) {
-    // 에러가 발생해도 쿠키는 백엔드에서 제거되므로 프론트엔드에서는 에러만 로그
     console.error('로그아웃 에러:', error);
   }
-  // 쿠키는 백엔드에서 제거되므로 프론트엔드에서는 별도 처리 불필요
+  // ✅ localStorage에서 토큰 제거
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+  }
 };
 
 /**
