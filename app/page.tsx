@@ -1,40 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getProfile } from '@/services/auth'
-import type { ProfileResponse } from '@/types/auth'
+import { useAuthContext } from '@/contexts/AuthContext'
 import styles from './page.module.css'
 
 export default function Home() {
-  const [profile, setProfile] = useState<ProfileResponse | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await getProfile(true) // silent 모드로 호출 (401 에러 조용히 처리)
-        setProfile(data)
-      } catch (error) {
-        // 로그인하지 않은 상태는 정상
-        setProfile(null)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchProfile()
-
-    // auth-change 이벤트 리스너
-    const handleAuthChange = () => {
-      fetchProfile()
-    }
-    window.addEventListener('auth-change', handleAuthChange)
-
-    return () => {
-      window.removeEventListener('auth-change', handleAuthChange)
-    }
-  }, [])
+  // AuthContext에서 단일 인증 상태 사용
+  const { isLoggedIn, profile } = useAuthContext()
+  
+  // isLoggedIn === null: 확인 중
+  const isLoading = isLoggedIn === null
 
   return (
     <main className={styles.container}>

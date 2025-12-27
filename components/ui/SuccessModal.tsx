@@ -27,24 +27,11 @@ export default function SuccessModal({
     if (onClose) {
       onClose()
     }
-    // 리다이렉트는 모달이 닫힌 후에 실행
+    // 리다이렉트 실행
     if (redirectPath) {
       // 약간의 지연을 두어 모달 닫기 애니메이션이 완료된 후 리다이렉트
-      // Navbar 업데이트를 위한 이벤트 발생 (쿠키 설정 대기)
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('auth-change'))
-      }
       setTimeout(() => {
-        // router.push를 사용하여 페이지 이동
         router.push(redirectPath)
-        // 추가로 auth-change 이벤트 발생 (페이지 이동 후)
-        setTimeout(() => {
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new Event('auth-change'))
-          }
-          // router.refresh()로 Navbar 상태 갱신
-          router.refresh()
-        }, 300)
       }, 200)
     }
   }

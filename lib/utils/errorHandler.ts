@@ -37,7 +37,7 @@ export const handleApiError = (error: unknown): ErrorResponse => {
     if ('request' in error) {
       return {
         statusCode: 0,
-        message: '백엔드 서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요. (http://localhost:3001)',
+        message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.',
         error: 'Network Error',
       };
     }
@@ -48,7 +48,7 @@ export const handleApiError = (error: unknown): ErrorResponse => {
       if (code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === 'ERR_NETWORK') {
         return {
           statusCode: 0,
-          message: '백엔드 서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요. (http://localhost:3001)',
+          message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.',
           error: 'Network Error',
         };
       }
@@ -64,7 +64,7 @@ export const handleApiError = (error: unknown): ErrorResponse => {
         error.message.includes('timeout')) {
       return {
         statusCode: 0,
-        message: '백엔드 서버에 연결할 수 없습니다. 백엔드 서버가 실행 중인지 확인해주세요. (http://localhost:3001)',
+        message: '서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요.',
         error: 'Network Error',
       };
     }
